@@ -34,20 +34,11 @@
   }
 
   async function chooseDevice() {
-    const remembered = await findPreviouslyAuthorizedDevice();
-
-    if (remembered) {
-      return remembered;
+    if (!navigator.bluetooth) {
+      throw new Error("Bluetooth API unavailable");
     }
 
-    if (
-      !navigator.bluetooth ||
-      typeof navigator.bluetooth.requestDevice !== "function"
-    ) {
-      throw new Error(
-        "Web Bluetooth is unavailable. Open this page in Safari with Beacio enabled."
-      );
-    }
+    setStatus("Opening Bluetooth picker...");
 
     return await navigator.bluetooth.requestDevice({
       filters: [{ name: DEVICE_NAME }],
